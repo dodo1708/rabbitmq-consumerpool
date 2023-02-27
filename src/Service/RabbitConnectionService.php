@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Command\WorkerSettings;
+use App\Settings\WorkerSettings;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class RabbitConnectionService
