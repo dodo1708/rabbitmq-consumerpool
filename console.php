@@ -22,7 +22,6 @@ function init_console_app(): \Symfony\Component\Console\Application
 
     $application = new \Symfony\Component\Console\Application();
     $application->add($container->make(\App\Command\WorkerControllerCommand::class, ['name' => \App\Command\WorkerControllerCommand::getDefaultName()]));
-    $application->add($container->make(\App\Command\SendMessagesCommand::class, ['name' => \App\Command\SendMessagesCommand::getDefaultName()]));
     return $application;
 }
 
