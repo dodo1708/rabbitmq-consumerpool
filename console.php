@@ -1,5 +1,7 @@
 <?php
 
+use App\Container\ContainerRef;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 function init_app()
@@ -7,17 +9,14 @@ function init_app()
     $containerBuilder = new \DI\ContainerBuilder();
 
     $container = $containerBuilder->build();
-    \Slim\Factory\AppFactory::setContainer($container);
-
-    $app = \Slim\Factory\AppFactory::create();
-    \App\Application\Application::getInstance()->setApp($app);
+    ContainerRef::getInstance()->setContainer($container);
 }
 
 function init_console_app(): \Symfony\Component\Console\Application
 {
-    $container = \App\Application\Application::getInstance()->getApp()->getContainer();
+    $container = ContainerRef::getInstance()->getContainer();
     if (!$container) {
-        throw new \RuntimeException('Init app first.');
+        throw new \RuntimeException('Init container first.');
     }
 
     $application = new \Symfony\Component\Console\Application();
