@@ -27,15 +27,25 @@ class WorkerControllerCommand extends AbstractWorkerCommand
     {
         parent::execute($input, $output);
 
-        $workerNum = WorkerSettings::getNumberOfWorkers();
+        $this->logSuccess('*************************************');
+        $this->logSuccess(json_encode(WorkerSettings::getSettings(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        $this->logSuccess('*************************************');
+
         // the process pool is only for receiving and delegating messages from rabbit
-        $pool = new \OpenSwoole\Process\Pool($workerNum);
+        $pool = new \OpenSwoole\Process\Pool(WorkerSettings::getNumberOfWorkers());
 
         $pool->on("WorkerStart", function (\OpenSwoole\Process\Pool $pool, $workerId) {
             $callback = function (AMQPMessage $msg) use ($workerId) {
                 $msgContent = $msg->getBody();
                 $this->logInfo(sprintf('%s - Received message %s', $workerId, substr($msgContent, 0, 100)));
                 exec(CommandBuilderUtility::buildCommand($msgContent), $output, $exitCode);
+                $outputContent = implode("\n", $output);
+                if ($exitCode === 0) {
+                    $this->logSuccess($outputContent);
+                } else {
+                    $this->logError($outputContent);
+                }
+                $this->logInfo(sprintf('%s - Done processing message. Exit code: %s', $workerId, $exitCode));
             };
 
             $qUtil = new QueueUtility(WorkerSettings::getRabbitQueueName(), true);

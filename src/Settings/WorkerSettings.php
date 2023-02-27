@@ -99,4 +99,19 @@ class WorkerSettings
         }
         return self::DEFAULT_BASE64;
     }
+
+    public static function getSettings(): array
+    {
+        return [
+            'RC_NUMBER_OF_WORKERS' => self::getNumberOfWorkers(),
+            'RABBIT_USER' => self::getRabbitUser(),
+            'RABBIT_PASSWORD' => '**********',
+            'RABBIT_HOST' => self::getRabbitHost(),
+            'RABBIT_PORT' => self::getRabbitPort(),
+            'RABBIT_QUEUE_NAME' => self::getRabbitQueueName(),
+            'RC_BINARY_PATH' => self::getBinaryPath(),
+            'RC_COMMAND' => self::getCommand(),
+            'RC_BASE64' => self::getBase64(),
+        ];
+    }
 }
