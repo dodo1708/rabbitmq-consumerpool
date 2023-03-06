@@ -37,8 +37,10 @@ class WorkerControllerCommand extends AbstractWorkerCommand
         $pool->on("WorkerStart", function (\OpenSwoole\Process\Pool $pool, $workerId) {
             $callback = function (AMQPMessage $msg) use ($workerId) {
                 $msgContent = $msg->getBody();
-                $this->logInfo(sprintf('%s - Received message %s', $workerId, substr($msgContent, 0, 100)));
-                exec(CommandBuilderUtility::buildCommand($msgContent), $output, $exitCode);
+                $this->logInfo(sprintf('%s - Received message %s', $workerId, substr($msgContent, 0, 1000)));
+                $command = CommandBuilderUtility::buildCommand($msgContent);
+                $this->logInfo(sprintf('%s - Running command %s', $workerId, substr($command, 0, 1000)));
+                exec($command, $output, $exitCode);
                 $outputContent = implode("\n", $output);
                 if ($exitCode === 0) {
                     $this->logSuccess($outputContent);
